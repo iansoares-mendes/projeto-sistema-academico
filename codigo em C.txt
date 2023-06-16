@@ -1,0 +1,756 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<locale.h>
+#define TM_STRING 256
+char path_aluno[TM_STRING] = "C:\\Users\\ufcga\\Documents\\Sistema_de_controle_academico_Alunos\\";
+char path_notas[TM_STRING] = "C:\\Users\\ufcga\\Documents\\Sistema_de_controle_academico_notas\\";
+char path_disciplinas[TM_STRING] = "C:\\Users\\ufcga\\Documents\\Sistema_de_controle_academico_Disciplinas\\";
+
+
+void voltar_menu_inicial(){
+    int numero_escolhido = 0;
+    printf("\nEscolha o número da opção desejada: \n1. Voltar ao menu principal.\n2. Sair do sistema.\n");
+    scanf("%i", &numero_escolhido);
+    while(numero_escolhido > 2 || numero_escolhido < 1){
+        system("cls");
+        printf("\nEscolha o número da opção desejada: \n1. Voltar ao menu principal.\n2. Sair do sistema.\n");
+        scanf("%i", &numero_escolhido);
+    }if(numero_escolhido == 2){
+        exit(1);
+    }else if(numero_escolhido == 1){
+        system("cls");
+        main();
+    }
+}
+
+void cadastrar_disciplina(){
+    char nome_disciplina[TM_STRING], path[TM_STRING], txt[TM_STRING] = ".txt", codigo_disciplina[TM_STRING];
+
+
+    printf("\nDigite o nome da disciplina: ");
+    setbuf(stdin, NULL);
+    gets(nome_disciplina);
+
+    strcpy(path,path_disciplinas);
+    strcat(path,nome_disciplina);
+    strcat(path,txt);
+
+
+    FILE *fp_disciplina;
+    fp_disciplina = fopen(path,"w");
+    if(fp_disciplina == NULL){
+        printf("Erro ao abrir o arquivo!");
+        system("pause");
+        exit(1);
+    }
+
+    printf("\nDigite o código da disciplina de %s. ", nome_disciplina);
+    setbuf(stdin, NULL);
+    gets(codigo_disciplina);
+
+    fprintf(fp_disciplina,"\nCódigo da disciplina de %s: %s", nome_disciplina,codigo_disciplina);
+    fclose(fp_disciplina);
+
+    system("cls");
+
+    voltar_menu_inicial();
+}
+
+void editar_disciplina(){
+    char nome_disciplina_editar[TM_STRING], path[TM_STRING], txt[TM_STRING] = ".txt", dados_disciplina[10000];
+    int numero_escolhido_editar = 0;
+
+    system("cls");
+
+    printf("\nDigite o nome da disciplina que você deseja editar: ");
+    setbuf(stdin, NULL);
+    gets(nome_disciplina_editar);
+
+    strcpy(path,path_disciplinas);
+    strcat(path,nome_disciplina_editar);
+    strcat(path,txt);
+
+    FILE *fp_disciplina;
+    fp_disciplina = fopen(path,"r");
+    if(fp_disciplina == NULL){
+        printf("Erro ao abrir o arquivo!");
+        system("pause");
+        exit(1);
+    }
+
+    printf("\n");
+
+
+    while(!feof(fp_disciplina)){
+        setbuf(stdin, NULL);
+        fgets(dados_disciplina,10000,fp_disciplina);
+        printf("\n%s", dados_disciplina);
+    }
+
+    printf("\n");
+
+
+    while(numero_escolhido_editar > 2 || numero_escolhido_editar < 1){
+        printf("\nDigite a opção desejada.\n\n1. Editar Dados.\n2. Sair do sistema.\n");
+        scanf("%i", &numero_escolhido_editar);
+        system("cls");
+    }
+
+    if(numero_escolhido_editar == 1){
+        fclose(fp_disciplina);
+        char *disciplina_ponteiro;
+        disciplina_ponteiro = &nome_disciplina_editar;
+        cadastrar_disciplina_e_editar(disciplina_ponteiro);
+    }else if(numero_escolhido_editar == 2){
+        system("pause");
+        exit(1);
+    }
+
+    system("pause");
+
+    fclose(fp_disciplina);
+
+}
+
+void cadastrar_disciplina_e_editar(char n[TM_STRING]){
+    char path[TM_STRING], txt[TM_STRING] = ".txt", codigo_disciplina[TM_STRING];
+
+    strcpy(path,path_disciplinas);
+    strcat(path,n);
+    strcat(path,txt);
+
+
+    FILE *fp_disciplina;
+    fp_disciplina = fopen(path,"w");
+    if(fp_disciplina == NULL){
+        printf("Erro ao abrir o arquivo!");
+        system("pause");
+        exit(1);
+    }
+
+    printf("\nDigite o código da disciplina de %s. ", n);
+    setbuf(stdin, NULL);
+    gets(codigo_disciplina);
+
+    fprintf(fp_disciplina,"\nCódigo da disciplina de %s: %s", n,codigo_disciplina);
+    fclose(fp_disciplina);
+
+    system("cls");
+
+    voltar_menu_inicial();
+}
+
+void consultar_disciplina(){
+    char nome_disciplina_editar[TM_STRING], path[TM_STRING], txt[TM_STRING] = ".txt", dados_disciplina[10000];
+
+    system("cls");
+    printf("\nDigite o nome da disciplina que você deseja consultar: ");
+    setbuf(stdin, NULL);
+    gets(nome_disciplina_editar);
+
+    strcpy(path,path_disciplinas);
+    strcat(path,nome_disciplina_editar);
+    strcat(path,txt);
+
+    FILE *fp_disciplina;
+    fp_disciplina = fopen(path,"r");
+    if(fp_disciplina == NULL){
+        printf("Erro ao abrir o arquivo!");
+        system("pause");
+        exit(1);
+    }
+
+    printf("\n");
+
+    while(!feof(fp_disciplina)){
+        setbuf(stdin, NULL);
+        fgets(dados_disciplina,10000,fp_disciplina);
+        printf("\n%s", dados_disciplina);
+    }
+    fclose(fp_disciplina);
+
+    printf("\n");
+
+    voltar_menu_inicial();
+}
+
+void remover_disciplina(){
+    char disciplina_removida[TM_STRING], path[TM_STRING], txt[TM_STRING] = ".txt";
+
+    printf("\nDigite o nome da disciplina que você deseja remover: ");
+    setbuf(stdin, NULL);
+    gets(disciplina_removida);
+
+    strcpy(path,path_disciplinas);
+    strcat(path,disciplina_removida);
+    strcat(path,txt);
+
+    int remover = remove(path);
+    if(remover != 0){
+        printf("\nNão foi possível remover a disciplina!");
+        system("pause");
+        exit(1);
+    }else{
+        printf("\nDisciplina removida com sucesso!\n");
+        system("pause");
+    }
+    voltar_menu_inicial();
+}
+
+void remover_aluno(){
+    char aluno_removido[TM_STRING], path[TM_STRING], txt[TM_STRING] = ".txt";
+
+    printf("\nDigite o nome do(a) aluno(a) que você deseja remover: ");
+    setbuf(stdin, NULL);
+    gets(aluno_removido);
+
+    strcpy(path,path_aluno);
+    strcat(path,aluno_removido);
+    strcat(path,txt);
+
+    int remover = remove(path);
+    if(remover != 0){
+        printf("\nNão foi possível remover o(a) aluno(a)!");
+        system("pause");
+        exit(1);
+    }else{
+        printf("\nAluno(a) removido(a) com sucesso!\n");
+        system("pause");
+    }
+
+    voltar_menu_inicial();
+}
+
+void cadastrar_aluno(){
+    char nome_aluno[TM_STRING], path[TM_STRING], txt[TM_STRING] = ".txt", endereco[TM_STRING], telefone[TM_STRING];
+    int matricula = 0;
+
+
+    printf("\nDigite o nome do(a) aluno(a): ");
+    setbuf(stdin, NULL);
+    gets(nome_aluno);
+
+
+    strcpy(path,path_aluno);
+    strcat(path,nome_aluno);
+    strcat(path,txt);
+
+
+    FILE *fp;
+    fp = fopen(path,"w");
+    if(fp == NULL){
+        printf("Erro ao abrir o arquivo!");
+        system("pause");
+        exit(1);
+    }
+
+    printf("\nDigite a Matrícula do(a) aluno(a) %s:", nome_aluno);
+    scanf("%i", &matricula);
+
+    fprintf(fp,"\n=====================================Dados Aluno(a) %s.============================================================", nome_aluno);
+    fprintf(fp,"\nMatrícula: %i.", matricula);
+
+    printf("\nDigite o endereço do(a) aluno(a) %s: ", nome_aluno);
+    setbuf(stdin, NULL);
+    gets(endereco);
+
+    fprintf(fp, "\nEndereço do(a) aluno(a) %s: %s.", nome_aluno, endereco);
+
+    printf("\nDigite o telefone do(a) aluno(a) %s: ", nome_aluno);
+    setbuf(stdin, NULL);
+    gets(telefone);
+
+    fprintf(fp,"\nContato do(a) aluno(a) %s: %s", nome_aluno,telefone);
+    fprintf(fp,"\n\n");
+    fclose(fp);
+
+    system("pause");
+
+    voltar_menu_inicial();
+}
+
+void cadastrar_aluno_e_editar(char n[TM_STRING]){
+    char path[TM_STRING], txt[TM_STRING] = ".txt", endereco[TM_STRING], telefone[TM_STRING];
+    int matricula = 0;
+
+
+
+    strcpy(path,path_aluno);
+    strcat(path,n);
+    strcat(path,txt);
+
+
+    FILE *fp;
+    fp = fopen(path,"w");
+    if(fp == NULL){
+        printf("Erro ao abrir o arquivo!");
+        system("pause");
+        exit(1);
+    }
+
+
+
+    printf("\nDigite a Matrícula do(a) aluno(a) %s:", n);
+    scanf("%i", &matricula);
+
+    fprintf(fp,"\nDados Aluno(a) %s.", n);
+    fprintf(fp,"\nMatrícula: %i.", matricula);
+
+
+    printf("\nDigite o endereço do(a) aluno(a) %s: ", n);
+    setbuf(stdin, NULL);
+    gets(endereco);
+
+
+    fprintf(fp, "\nEndereço do(a) aluno(a) %s: %s.", n, endereco);
+    printf("\nDigite o telefone do(a) aluno(a) %s: ", n);
+    setbuf(stdin, NULL);
+    gets(telefone);
+
+
+    fprintf(fp,"\nContato do(a) aluno(a) %s: %s", n,telefone);
+
+    fclose(fp);
+
+    voltar_menu_inicial();
+}
+
+void editar_aluno(){
+    char aluno_editar[TM_STRING], path[TM_STRING], txt[TM_STRING] = ".txt", dados[10000];
+    int numero_escolhido_editar = 0;
+
+    printf("\nDigite o nome do(a) aluno(a) que você deseja editar: ");
+    setbuf(stdin, NULL);
+    gets(aluno_editar);
+
+    strcpy(path,path_aluno);
+    strcat(path,aluno_editar);
+    strcat(path,txt);
+
+    FILE *fp;
+    fp = fopen(path,"r");
+    if(fp == NULL){
+        printf("\nErro ao abrir o arquivo!");
+        system("pause");
+        exit(1);
+    }
+    rewind(fp);
+    while(!feof(fp)){
+        setbuf(stdin, NULL);
+        fgets(dados,10000,fp);
+        printf("\n%s", dados);
+    }
+
+    printf("\n");
+    printf("\nDigite a opção desejada.\n\n1. Editar Dados.\n2. Sair do sistema.\n");
+
+
+    scanf("%i", &numero_escolhido_editar);
+    while(numero_escolhido_editar > 2 || numero_escolhido_editar < 1){
+        system("cls");
+        printf("\nDigite a opção desejada.\n\n1. Editar Dados.\n2. Sair do sistema.\n");
+        scanf("%i", &numero_escolhido_editar);
+
+    }if(numero_escolhido_editar == 1){
+        fclose(fp);
+        char *nome_ponteiro;
+        nome_ponteiro = &aluno_editar;
+        cadastrar_aluno_e_editar(nome_ponteiro);
+    }else if(numero_escolhido_editar == 2){
+        system("pause");
+        exit(1);
+    }
+
+    system("pause");
+    fclose(fp);
+
+}
+
+void consultar_aluno(){
+    char aluno_consulta[TM_STRING], path[TM_STRING], txt[TM_STRING] = ".txt", dados[10000];
+
+    printf("\nDigite o nome do(a) aluno(a) que você deseja consultar: ");
+    setbuf(stdin, NULL);
+    gets(aluno_consulta);
+
+    strcpy(path,path_aluno);
+    strcat(path,aluno_consulta);
+    strcat(path,txt);
+
+    FILE *fp;
+    fp = fopen(path,"r");
+    if(fp == NULL){
+        printf("\nErro ao abrir o arquivo!");
+        system("pause");
+        exit(1);
+    }
+    rewind(fp);
+    while(!feof(fp)){
+        setbuf(stdin, NULL);
+        fgets(dados,10000,fp);
+        printf("\n%s", dados);
+    }
+    fclose(fp);
+    printf("\n\n");
+    system("pause");
+
+    voltar_menu_inicial();
+}
+
+void sub_menu_aluno(){
+    system("cls");
+    int numero_sub_menu = 0;
+    printf("\n==========Sub-Menu-Alunos==========\n\n1. Cadastrar Aluno(a).\n2. Editar Aluno(a).\n3. Consultar Aluno(a).\n4. Remover Aluno(a).\nDigite o número da opão desejada: ");
+    scanf("%i", &numero_sub_menu);
+    while(numero_sub_menu > 4 || numero_sub_menu < 0){
+        system("cls");
+        printf("\n==========Sub-Menu-Alunos==========\n\n1. Cadastrar Aluno(a).\n2. Editar Aluno(a).\n3. Consultar Aluno(a).\n4. Remover Aluno(a).\nDigite o número da opção desejada: ");
+        scanf("%i", &numero_sub_menu);
+    }if(numero_sub_menu == 1){
+        cadastrar_aluno();
+    }else if(numero_sub_menu == 2){
+        editar_aluno();
+    }else if(numero_sub_menu == 3){
+        consultar_aluno();
+    }else if(numero_sub_menu == 4){
+        remover_aluno();
+    }
+    voltar_menu_inicial();
+
+}
+
+void sub_menu_disciplinas(){
+    int numero_escolhida_opcao_disciplina = 0;
+    char Disciplina[TM_STRING] = "Disciplina";
+    printf("\n==========Sub-Menu-Disciplinas==========\n\n1. Cadastrar Disciplina.\n2. Editar Disciplina.\n3. Consultar Disciplina.\n4. Remover Disciplina.\nDigite o número da opçao desejada: ");
+    scanf("%i", &numero_escolhida_opcao_disciplina);
+    while(numero_escolhida_opcao_disciplina < 1 || numero_escolhida_opcao_disciplina > 4){
+        system("cls");
+        printf("\n==========Sub-Menu-Disciplinas==========\n\n1. Cadastrar Disciplina.\n2. Editar Disciplina.\n3. Consultar Disciplina.\n4. Remover Disciplina.\nDigite o número da opção desejada: ");
+        scanf("%i", &numero_escolhida_opcao_disciplina);
+    }if(numero_escolhida_opcao_disciplina == 1){
+        cadastrar_disciplina();
+    }else if(numero_escolhida_opcao_disciplina == 2){
+        editar_disciplina();
+    }else if(numero_escolhida_opcao_disciplina == 3){
+        consultar_disciplina();
+    }else if(numero_escolhida_opcao_disciplina == 4){
+        remover_disciplina();
+    }
+}
+
+void sub_menu_notas(){
+    system("cls");
+    int numero_sub_menu_notas = 0;
+    printf("\n==========Sub-Menu-Notas==========\n\n1. Cadastrar Notas.\n2. Editar Notas.\n3. Consultar Notas.\n4. Remover Notas.\nDigite o número da opção desejada: ");
+    scanf("%i", &numero_sub_menu_notas);
+    while(numero_sub_menu_notas > 4 || numero_sub_menu_notas < 0){
+        system("cls");
+        printf("\n==========Sub-Menu-Notas==========\n\n1. Cadastrar Notas.\n2. Editar Notas.\n3. Consultar Notas.\n4. Remover Notas.\nDigite o número da opção desejada: ");
+        scanf("%i", &numero_sub_menu_notas);
+    }if(numero_sub_menu_notas == 1){
+        cadastrar_notas();
+    }else if(numero_sub_menu_notas == 2){
+        editar_notas();
+    }else if(numero_sub_menu_notas == 3){
+        consultar_notas();
+    }else if(numero_sub_menu_notas == 4){
+        remover_notas();
+    }
+    voltar_menu_inicial();
+}
+
+void cadastrar_notas(){
+    char nome_disciplina[TM_STRING],codigo_disciplina[TM_STRING], nome_aluno[TM_STRING], nome_disciplina_copiado[TM_STRING], continuacao[TM_STRING] = "-", path[TM_STRING];
+    int matricula = 0, frequencia = 0;
+    float primeira_nota = 0,segunda_nota = 0, terceira_nota = 0, media = 0;
+
+    strcpy(path,path_notas);
+
+    printf("\nDigite o nome da Disciplina: ");
+    setbuf(stdin, NULL);
+    gets(nome_disciplina);
+
+
+    printf("\nDigite o código da disciplina de %s: ", nome_disciplina);
+    setbuf(stdin, NULL);
+    gets(codigo_disciplina);
+    strcpy(nome_disciplina_copiado,nome_disciplina);
+
+
+    printf("\nDigite o nome do(a) aluno(a) matriculado(a) na disciplina de %s: ", nome_disciplina);
+    setbuf(stdin, NULL);
+    gets(nome_aluno);
+
+    strcat(nome_disciplina,continuacao);
+    strcat(nome_disciplina,nome_aluno);
+
+
+    printf("\nDigite a matricula do(a) aluno(a) %s: ", nome_aluno);
+    scanf("%i", &matricula);
+
+
+    printf("\nDigite a primeira nota: ");
+    scanf("%f", &primeira_nota);
+
+    printf("\nDigite a segunda nota: ");
+    scanf("%f", &segunda_nota);
+
+    printf("\nDigite a terceira nota: ");
+    scanf("%f", &terceira_nota);
+
+    media = (primeira_nota+segunda_nota+terceira_nota)/3;
+
+
+    printf("\nDigite a frequência do(a) aluno(a) %s. Na disciplina de %s: ", nome_aluno,nome_disciplina_copiado);
+    scanf("%i", &frequencia);
+
+    strcat(path,nome_disciplina);
+    strcat(path,".txt");
+
+
+    FILE *fp;
+    fp = fopen(path,"w");
+    if(fp == NULL){
+        printf("\nErro ao abrir o arquivo!");
+        system("pause");
+        exit(1);
+    }
+
+    fprintf(fp,"\nDados do(a) aluno(a) %s na disciplina de %s\nMatrícula do(a) aluno(a) %s: %i\nCódigo da disciplina de %s: %s\nPrimeira nota: %f\nSegunda nota: %f\nTerceira nota: %f\nMédia: %f\nFrequência: %i", nome_aluno,nome_disciplina_copiado,nome_aluno, matricula,nome_disciplina_copiado,codigo_disciplina,primeira_nota, segunda_nota, terceira_nota, media, frequencia);
+
+    fclose(fp);
+
+
+
+}
+
+void consultar_notas(){
+    char nome_disciplina[TM_STRING],dados_lidos[TM_STRING],nome_disciplina_copiado[TM_STRING], nome_aluno[TM_STRING], continuacao[TM_STRING] = "-", path[TM_STRING];
+
+    strcpy(path,path_notas);
+
+    printf("\nDigite o nome da Disciplina: ");
+    setbuf(stdin, NULL);
+    gets(nome_disciplina);
+    strcpy(nome_disciplina_copiado,nome_disciplina);
+
+
+    printf("\nDigite o nome do(a) aluno(a) matriculado(a) na disciplina de %s que você deseja consultar: ", nome_disciplina);
+    setbuf(stdin, NULL);
+    gets(nome_aluno);
+
+    strcat(nome_disciplina,continuacao);
+    strcat(nome_disciplina,nome_aluno);
+    strcat(path,nome_disciplina);
+    strcat(path,".txt");
+
+    FILE *fp;
+    fp = fopen(path,"r");
+    if(fp == NULL){
+        printf("\nErro ao tentar consultar as notas do(a) aluno(a): %s matriculado(a) na disciplina de %s:",nome_aluno, nome_disciplina_copiado);
+        system("pause");
+        voltar_menu_inicial();
+    }
+
+    while(!feof(fp)){
+        fgets(dados_lidos,TM_STRING,fp);
+        printf("%s", dados_lidos);
+    }
+    fclose(fp);
+    printf("\n");
+
+
+}
+
+void cadastrar_notas_e_editar(char n[TM_STRING]){
+    char nome_disciplina[TM_STRING],codigo_disciplina[TM_STRING],dados_lidos[TM_STRING],nome_disciplina_copiado[TM_STRING], nome_aluno[TM_STRING], continuacao[TM_STRING] = "-", path[TM_STRING];
+    int matricula = 0, frequencia = 0;
+    float primeira_nota = 0,segunda_nota = 0, terceira_nota = 0, media = 0;
+
+    strcpy(path,path_notas);
+
+    printf("\nDigite o nome da Disciplina: ");
+    setbuf(stdin, NULL);
+    gets(nome_disciplina);
+    strcpy(nome_disciplina_copiado,nome_disciplina);
+
+
+    printf("\nDigite o nome do(a) aluno(a) matriculado(a) na disciplina de %s que você deseja editar: ", nome_disciplina);
+    setbuf(stdin, NULL);
+    gets(nome_aluno);
+
+    strcat(nome_disciplina,continuacao);
+    strcat(nome_disciplina,nome_aluno);
+    strcat(path,nome_disciplina);
+    strcat(path,".txt");
+
+    FILE *fp1;
+    fp1 = fopen(path,"r");
+    if(fp1 == NULL){
+        printf("\nErro ao tentar consultar as notas do(a) aluno(a): %s matriculado(a) na disciplina de %s:",nome_aluno, nome_disciplina_copiado);
+        system("pause");
+        voltar_menu_inicial();
+    }
+
+    while(!feof(fp1)){
+        fgets(dados_lidos,TM_STRING,fp1);
+        printf("%s", dados_lidos);
+    }
+    fclose(fp1);
+
+
+    FILE *fp;
+    fp = fopen(path,"w");
+    if(fp == NULL){
+        printf("\nErro ao tentar editar as notas do(a) aluno(a): %s matriculado(a) na disciplina de %s:",nome_aluno, nome_disciplina_copiado);
+        system("pause");
+        voltar_menu_inicial();
+    }
+
+
+    printf("\nDigite o código da disciplina de %s: ", nome_disciplina_copiado);
+    setbuf(stdin, NULL);
+    gets(codigo_disciplina);
+
+    printf("\nDigite a matricula do(a) aluno(a) %s: ", nome_aluno);
+    scanf("%i", &matricula);
+
+
+    printf("\nDigite a primeira nota: ");
+    scanf("%f", &primeira_nota);
+
+    printf("\nDigite a segunda nota: ");
+    scanf("%f", &segunda_nota);
+
+    printf("\nDigite a terceira nota: ");
+    scanf("%f", &terceira_nota);
+
+    media = (primeira_nota+segunda_nota+terceira_nota)/3;
+
+
+    printf("\nDigite a frequência do(a) aluno(a) %s. Na disciplina de %s: ", nome_aluno,nome_disciplina_copiado);
+    scanf("%i", &frequencia);
+
+    fprintf(fp,"\nDados do(a) aluno(a) %s na disciplina de %s\nMatrícula do(a) aluno(a) %s: %i\nCódigo da disciplina de %s: %s\nPrimeira nota: %f\nSegunda nota: %f\nTerceira nota: %f\nMédia: %f\nFrequência: %i", nome_aluno,nome_disciplina_copiado,nome_aluno, matricula,nome_disciplina_copiado,codigo_disciplina,primeira_nota, segunda_nota, terceira_nota, media, frequencia);
+
+    fclose(fp);
+
+}
+
+void editar_notas(){
+    char nome_aluno_editar[TM_STRING], path[TM_STRING], txt[TM_STRING] = ".txt", dados[10000], nome_disciplina_editar[TM_STRING], continuacao[TM_STRING] = "-";
+    int numero_escolhido_editar = 0;
+
+    printf("\nDigite o nome do(a) aluno(a): ");
+    setbuf(stdin, NULL);
+    gets(nome_aluno_editar);
+    printf("\nDigite o nome da disciplina que o(a) aluno(a) %s está matriculado(a): ", nome_aluno_editar);
+    setbuf(stdin, NULL);
+    gets(nome_disciplina_editar);
+
+    strcpy(path,path_notas);
+    strcat(nome_disciplina_editar,continuacao);
+    strcat(nome_disciplina_editar,nome_aluno_editar);
+    strcat(path,nome_disciplina_editar);
+    strcat(path,".txt");
+
+    system("cls");
+
+
+    FILE *fp;
+    fp = fopen(path,"r");
+    if(fp == NULL){
+        printf("\nErro ao abrir o arquivo!");
+        system("pause");
+        exit(1);
+    }
+    rewind(fp);
+    while(!feof(fp)){
+        setbuf(stdin, NULL);
+        fgets(dados,10000,fp);
+        printf("\n%s", dados);
+    }
+
+    printf("\n");
+    printf("\nDigite a opção desejada.\n\n1. Editar Dados.\n2. Sair do sistema.\n");
+    scanf("%i", &numero_escolhido_editar);
+
+    while(numero_escolhido_editar > 2 || numero_escolhido_editar < 1){
+        system("cls");
+        printf("\nDigite a opção desejada.\n\n1. Editar Dados.\n2. Sair do sistema.\n");
+        scanf("%i", &numero_escolhido_editar);
+
+    }if(numero_escolhido_editar == 1){
+        fclose(fp);
+        char *nome_ponteiro;
+        nome_ponteiro = &nome_disciplina_editar;
+        system("cls");
+        cadastrar_notas_e_editar(nome_ponteiro);
+    }else if(numero_escolhido_editar == 2){
+        system("pause");
+        exit(1);
+    }
+
+    system("pause");
+    fclose(fp);
+}
+
+void remover_notas(){
+    char notas_removidas[TM_STRING], path[TM_STRING], txt[TM_STRING] = ".txt", disciplina_consultada[TM_STRING], nome_aluno_consultado[TM_STRING], continuacao[TM_STRING] = "-";
+
+    printf("\nDigite o nome da disciplina: ");
+    setbuf(stdin, NULL);
+    gets(disciplina_consultada);
+
+    printf("\nDigite o nome do(a) aluno(a) matriculado(a) na disciplina de %s: ", disciplina_consultada);
+    setbuf(stdin, NULL);
+    gets(nome_aluno_consultado);
+
+
+    strcat(disciplina_consultada,continuacao);
+    strcat(disciplina_consultada,nome_aluno_consultado);
+    strcpy(path,path_notas);
+    strcat(path,disciplina_consultada);
+    strcat(path,".txt");
+
+    int remover = remove(path);
+    if(remover != 0){
+        printf("\nNão foi possível remover as notas desse estudante");
+        system("pause");
+        exit(1);
+    }else{
+        printf("\nNotas removida com sucesso!\n");
+        system("pause");
+    }
+    voltar_menu_inicial();
+
+}
+
+int main(){
+
+    setlocale(LC_ALL, "Portuguese_Brazil");
+    int numero_menu_inicial_escolhido = 0;
+    while(numero_menu_inicial_escolhido > 4 || numero_menu_inicial_escolhido < 1){
+        system("cls");
+        printf("================SISTEMA DE CONTROLE ACADEMICO================\n\n\n\t\t==========Menu Inicial==========\n1. Alunos.\n2. Disciplinas.\n3. Notas.\n4. Sair do sistema.\n\nDigite o número da opção desejada: ");
+        scanf("%i", &numero_menu_inicial_escolhido);
+
+    };
+
+    if(numero_menu_inicial_escolhido == 1){
+            sub_menu_aluno();
+            system("cls");
+    }else if(numero_menu_inicial_escolhido == 2){
+            system("cls");
+            sub_menu_disciplinas();
+    }else if(numero_menu_inicial_escolhido == 3){
+            sub_menu_notas();
+    }else if(numero_menu_inicial_escolhido == 4){
+            exit(1);
+    };
+
+
+    return 0;
+}
